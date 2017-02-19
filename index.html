@@ -31,29 +31,27 @@
 
     <script>
 
-      //Quick settings for loading a STL file
+      if (!Detector.webgl) Detector.addGetWebGLMessage();
+
+      // Quick settings for loading a STL file
       var stl = 'assets/base.stl';
       var scale = 1.0;
 
+      // Initialise variables
       var depthMaterial, effectComposer, depthRenderTarget;
-      var ssaoPass;
+      var fxaaPass, ssaoPass;
       var group;
       var depthScale = 1.0;
 
-      var postprocessing = { enabled : true, renderMode: 0 }; // renderMode: 0('framebuffer'), 1('onlyAO')
-
-      if (!Detector.webgl) Detector.addGetWebGLMessage();
+      var postprocessing = { enabled : true, renderMode: 0 };
 
       var container;
 
       var camera, controls, cameraTarget, scene, renderer;
 
-      //For hiding the ground plane
+      // For hiding the ground plane
       var ground_visible = true;
       var ground_animating = false;
-
-      //Effects
-
 
       init();
       animate();
@@ -66,9 +64,11 @@
         camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 1, 15 );
         camera.position.set( -1, 1.4, 3 );
 
+        // Where to look
         cameraTarget = new THREE.Vector3( 0, 0.2, 0 );
 
         scene = new THREE.Scene();
+
         scene.fog = new THREE.Fog( 0xaffffff, 2, 15 );
 
         // Ground plane
@@ -148,18 +148,15 @@
 
       function renderModeChange( value ) {
 
-        if ( value == 0 ) {
-
-          // framebuffer
+        if (value == 0) {
+          // Framebuffer
           ssaoPass.uniforms[ 'onlyAO' ].value = false;
 
-        } else if ( value == 1 ) {
-
+        } else if (value == 1) {
           // onlyAO
           ssaoPass.uniforms[ 'onlyAO' ].value = true;
 
         } else {
-
           console.error( "Not define renderModeChange type: " + value );
 
         }
@@ -201,10 +198,12 @@
 
         // Resize renderTargets
         ssaoPass.uniforms[ 'size' ].value.set( width, height );
+        fxaaPass.uniforms['resolution'].value.set(1 / width, 1 / height);
 
         var pixelRatio = renderer.getPixelRatio();
         var newWidth  = Math.floor( width / pixelRatio ) || 1;
         var newHeight = Math.floor( height / pixelRatio ) || 1;
+
         depthRenderTarget.setSize( newWidth, newHeight );
         effectComposer.setSize( newWidth, newHeight );
 
