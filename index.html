@@ -33,6 +33,8 @@
 
       if (!Detector.webgl) Detector.addGetWebGLMessage();
 
+      // This viewer is hacked together form various Three.js example projects & code samples found around the web.
+
       // Quick settings for loading a STL file
       var stl = 'assets/base.stl';
       var scale = 1.0;
@@ -219,8 +221,7 @@
         depthMaterial.depthPacking = THREE.RGBADepthPacking;
         depthMaterial.blending = THREE.NoBlending;
 
-        var pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter };
-        depthRenderTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, pars );
+        depthRenderTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter });
 
         // FXAA
         fxaaPass = new THREE.ShaderPass( THREE.FXAAShader );
@@ -236,7 +237,7 @@
         ssaoPass.uniforms[ 'cameraNear' ].value = camera.near;
         ssaoPass.uniforms[ 'cameraFar' ].value = camera.far;
         ssaoPass.uniforms[ 'onlyAO' ].value = ( postprocessing.renderMode == 1 );
-        ssaoPass.uniforms[ 'aoClamp' ].value = 0.6;
+        ssaoPass.uniforms[ 'aoClamp' ].value = 0.7;
         ssaoPass.uniforms[ 'lumInfluence' ].value = 0.2;
 
         // Add passes to effect composer
